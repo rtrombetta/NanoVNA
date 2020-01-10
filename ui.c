@@ -384,6 +384,34 @@ touch_position(int *x, int *y)
   *y = (last_touch_y - config.touch_cal[1]) * 16 / config.touch_cal[3];
 }
 
+void
+show_splash(void)
+{
+  int x = 25, y = 50;
+  
+  ili9341_fill(0, 0, 320, 240, 0);
+
+  // 0xf00f - verde
+  // 0xf0f0 - vermelho
+  // 0xf0ff - amarelo
+  // 0xff00 - azul
+  // 0xff0f - ciano
+  // 0xfff0 - roxo
+  // 0xffff - branco
+  //  ili9341_drawstring_size("NanoVNA.com.br", x, y, 0xffff, 0x0000, 4);
+  ili9341_drawstring_size("Nano", x, y, 0xffff, 0x0000, 4);
+  ili9341_drawstring_size("VNA", 105, y, 0xf0f0, 0x0000, 4);
+  ili9341_drawstring_size(".com.br", 165, y, 0xffff, 0x0000, 4);
+  y += 50;
+  ili9341_drawstring_5x7("Versao: ", 110, y, 0xf00f, 0x0000);
+  ili9341_drawstring_5x7(VERSION, 150, y, 0xffff, 0x0000);
+  y += 35;
+  ili9341_drawstring_5x7("Compilado em: ", 75, y, 0xf0ff, 0x0000);
+  ili9341_drawstring_5x7(__DATE__ " - " __TIME__, 145, y, 0xffff, 0x0000);
+
+  uint32_t ticks = chVTGetSystemTime() + 50000; // 1s = 5000
+  while (ticks > chVTGetSystemTime());    
+}
 
 void
 show_version(void)
@@ -393,10 +421,10 @@ show_version(void)
   adc_stop(ADC1);
   ili9341_fill(0, 0, 320, 240, 0);
 
-  ili9341_drawstring_size(BOARD_NAME, x, y, 0xffff, 0x0000, 4);
+  ili9341_drawstring_size(BOARD_NAME".com.br", x, y, 0xffff, 0x0000, 4);
   y += 25;
 
-  ili9341_drawstring_5x7("2016-2019 Copyright @edy555", x, y += 10, 0xffff, 0x0000);
+  ili9341_drawstring_5x7("2016-2020 Copyright @edy555", x, y += 10, 0xffff, 0x0000);
   ili9341_drawstring_5x7("Licensed under GPL. See: https://github.com/ttrftech/NanoVNA", x, y += 10, 0xffff, 0x0000);
   ili9341_drawstring_5x7("Version: " VERSION, x, y += 10, 0xffff, 0x0000);
   ili9341_drawstring_5x7("Build Time: " __DATE__ " - " __TIME__, x, y += 10, 0xffff, 0x0000);
@@ -1143,6 +1171,7 @@ const menuitem_t menu_top[] = {
   { MT_SUBMENU, "CAL", menu_cal },
   { MT_SUBMENU, "RECALL", menu_recall },
   { MT_SUBMENU, "CONFIG", menu_config },
+  { MT_CLOSE, "CLOSE", NULL },
   { MT_NONE, NULL, NULL } // sentinel
 };
 
